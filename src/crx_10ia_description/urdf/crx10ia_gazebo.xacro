@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="crx_10ia">
+
+    
+    <!-- Gazebo plugins for ROS2 control and sensors -->
+    <gazebo>
+        <plugin filename="libgz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <robot_param>robot_description</robot_param>
+            <robot_param_node>robot_state_publisher</robot_param_node>
+            <parameters>$(find crx_10ia_controller)/config/crx_10ia_controllers.yaml</parameters>
+        </plugin>
+        <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+    </gazebo>
+
+    <!-- LIDAR sensor added to the robot -->
+    <gazebo reference="lidar_link">
+      <sensor name="lidar_sensor" type="gpu_lidar">
+        <gz_frame_id>lidar_link</gz_frame_id>
+        <topic>lidar</topic>
+        <update_rate>30</update_rate>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>1800</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14</min_angle>
+              <max_angle>3.14</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>32</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.26</min_angle>
+              <max_angle>0.26</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.2</min>
+            <max>30.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <frame_id>lidar_link</frame_id>
+        </lidar>
+        <alwaysOn>true</alwaysOn>
+        <visualize>true</visualize>
+      </sensor>
+    </gazebo>
+    
+    
+    <gazebo reference="camera_link">
+      <sensor type="camera" name="camera_sensor">
+        <update_rate>30.0</update_rate>
+        <pose>0 0 0 0 0 0</pose>
+        <topic>/image_raw</topic>
+        <camera name="robot_camera">
+          <horizontal_fov>1.8</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+           <near>0.02</near>
+           <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+    </gazebo>
+    
+    
+    
+
+</robot>

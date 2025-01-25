@@ -1,0 +1,388 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="crx_10ia">
+
+    <!-- Include additional files for Gazebo and ROS2 control -->
+    
+    <xacro:include filename="$(find crx_10ia_description)/urdf/crx10ia_gazebo.xacro"/>
+    <xacro:include filename="$(find crx_10ia_description)/urdf/crx10ia_ros2_control.xacro"/>    
+    
+
+    <!-- Define properties -->
+     <!-- velocities based on crx-10ia-en.pdf-->
+    <xacro:property name="PI" value="3.14159"/>
+    <xacro:property name="effort" value="100"/>
+    <xacro:property name="velocityj12" value="2.0944"/>
+    <xacro:property name="velocityj3456" value="3.1416"/>
+    
+    
+    <!-- Macro to define default inertial properties -->
+    <xacro:macro name="default_inertial" params="mass ixx ixy ixz iyy iyz izz">
+        <inertial>
+            <mass value="${mass}"/>
+            <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}"
+                     iyy="${iyy}" iyz="${iyz}" izz="${izz}"/>
+        </inertial>       
+    </xacro:macro>
+
+    <!-- Macro to define default transmission properties -->
+    <xacro:macro name="default_transmission" params="number">
+        <transmission name="transmission_${number}">
+            <plugin>transmission_interface/SimpleTransmission</plugin>
+            <actuator name="motor_${number}" role="actuator1">
+                <joint name="joint_${number}" role="joint1">
+                    <mechanical_reduction>1.0</mechanical_reduction>
+                </joint>
+            </actuator>
+        </transmission>       
+    </xacro:macro>
+
+    <!-- Define links and joints for the CRX-10iA cobot -->
+    
+    <!-- World Link -->
+    <link name="world"/>
+
+
+    <!-- Base link -->
+    <link name="base_link">
+        <xacro:default_inertial mass="2.92" ixx="4.4453e-06" ixy="-1.1899e-09" ixz="4.8629e-08"
+                                iyy="5.1610e-06" iyz="-2.3237e-11" izz="7.6074e-06"/>
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Base.stl" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.0"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Base.stl" scale="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="virtual_joint" type="fixed"> 
+        <parent link="world"/>
+        <child link="base_link"/>
+        <origin rpy="0 0 0" xyz="0 0 0.075"/>
+    </joint>
+
+    <!-- Axis 1 -->
+    <link name="axis1">
+        <xacro:default_inertial mass="8.44" ixx="3.6630e-05" ixy="-2.2787e-11" ixz="4.8303e-11"
+                                iyy="3.1264e-05" iyz="3.5606e-06" izz="2.2953e-05"/>
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0.127"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis1.stl" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.127"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis1.stl" scale="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_1" type="revolute"> 
+        <parent link="base_link"/>
+        <child link="axis1"/>
+        <axis xyz="0 0 1"/>
+        <origin rpy="0 0 0" xyz="0 0 0.0"/>
+        <limit lower="-3.31612" upper="3.31612" effort="${effort}" velocity="${velocityj12}"/>
+    </joint>
+
+    <!-- Axis 2 -->
+    <link name="axis2">
+        <xacro:default_inertial mass="16.20" ixx="5.2360e-04" ixy="-2.1616e-10" ixz="-8.7671e-10"
+                                iyy="5.1247e-04" iyz="-1.9182e-05" izz="3.5332e-05"/>
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0.008"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis2.stl" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.008"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis2.stl" scale="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_2" type="revolute"> 
+        <parent link="axis1"/>
+        <child link="axis2"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0 0" xyz="0 -0.21841 0.245"/>
+        <limit lower="-${PI}" upper="${PI}" effort="${effort}" velocity="${velocityj12}"/>
+    </joint>
+
+    <!-- Axis 3 -->
+    <link name="axis3">
+        <xacro:default_inertial mass="4.36" ixx="6.4601e-06" ixy="-7.5464e-07" ixz="2.9350e-12"
+                                iyy="1.2561e-05" iyz="6.5929e-12" izz="1.2852e-05"/>
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 -0.001"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis3.stl" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 -0.001"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis3.stl" scale="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_3" type="revolute"> 
+        <parent link="axis2"/>
+        <child link="axis3"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0 0" xyz="0 0.21841 0.54"/>
+        <limit lower="-4.9742" upper="4.9742" effort="${effort}" velocity="${velocityj3456}"/>
+    </joint>
+
+    <!-- Axis 4 -->
+    <link name="axis4">
+        <xacro:default_inertial mass="5.24" ixx="4.5057e-06" ixy="9.3507e-07" ixz="2.4908e-11"
+                                iyy="5.9154e-05" iyz="-9.8603e-12" izz="5.9421e-05"/>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.386 0 0"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis4.stl" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.386 0 0"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis4.stl" scale="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_4" type="revolute"> 
+        <parent link="axis3"/>
+        <child link="axis4"/>
+        <axis xyz="1 0 0"/>
+        <origin rpy="0 0 0" xyz="0.153 0 0"/>
+        <limit lower="-3.31612" upper="3.31612" effort="${effort}" velocity="${velocityj3456}"/>
+    </joint>
+
+    <!-- Axis 5 -->
+    <link name="axis5">
+        <xacro:default_inertial mass="2.27" ixx="2.7400e-06" ixy="3.8494e-07" ixz="1.8985e-11"
+                                iyy="3.1956e-06" iyz="-1.6974e-11" izz="4.0112e-06"/>
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis5.stl" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis5.stl" scale="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_5" type="revolute"> 
+        <parent link="axis4"/>
+        <child link="axis5"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0 0" xyz=".3870 -0.149 0"/>
+        <limit lower="-${PI}" upper="${PI}" effort="${effort}" velocity="${velocityj3456}"/>
+    </joint>
+
+    <!-- Axis 6 -->
+    <link name="axis6">
+        <xacro:default_inertial mass="0.56" ixx="3.8760e-07" ixy="-1.0381e-09" ixz="-2.3362e-11"
+                                iyy="2.8196e-07" iyz="7.7551e-13" izz="2.9238e-07"/>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0595 0 0"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis6_WithConnectors.stl" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0595 0 0"/>
+            <geometry>
+                <mesh filename="package://crx_10ia_description/meshes/CRX-10iA_Axis6_WithConnectors.stl" scale="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_6" type="revolute"> 
+        <parent link="axis5"/>
+        <child link="axis6"/>
+        <axis xyz="1 0 0"/>
+        <origin rpy="0 0 0" xyz=".0995 0 0"/>
+        <limit lower="-3.927" upper="3.927" effort="${effort}" velocity="${velocityj3456}"/>
+    </joint>
+
+    <link name="gripper_base_link">
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+            <geometry>
+                <cylinder radius="0.045" length="0.05"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+            <geometry>
+                <cylinder radius="0.045" length="0.05"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_gripper_base" type="fixed">
+        <parent link="axis6"/>
+        <child link="gripper_base_link"/>
+        <origin rpy="0 0 0" xyz="0.0595 0 0.0"/>
+    </joint>
+
+    <!-- Left Gripper Finger -->
+    <link name="left_finger">
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.05 0.01 0.05"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.05 0.01 0.05"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Right Gripper Finger -->
+    <link name="right_finger">
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.05 0.01 0.05"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.05 0.01 0.05"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Prismatic Joint for Left Finger -->
+    <joint name="joint_7" type="prismatic">
+        <parent link="gripper_base_link"/>
+        <child link="left_finger"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0.1" friction="0.1"/>
+        <origin rpy="0 0 0" xyz="0.05 0.03 0"/>
+        <limit lower="-0.03001" upper="0.00001" effort="10" velocity="0.025"/>
+    </joint>
+
+    <!-- Prismatic Joint for Right Finger with Mimic -->
+    <joint name="joint_8" type="prismatic">
+        <parent link="gripper_base_link"/>
+        <child link="right_finger"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0.1" friction="0.1"/>
+        <origin rpy="0 0 0" xyz="0.05 -0.03 0"/>
+        <mimic joint="joint_7" multiplier="-1.0"/> <!-- Mimic the left prismatic joint with opposite direction -->
+        <limit lower="-0.00001" upper="0.03001" effort="10" velocity="0.025"/>
+    </joint>
+
+
+
+    <!-- Define the lidar link as a part of the robot -->
+    <link name="lidar_link">
+        <inertial>
+            <mass value="0.5"/>  <!-- Set a valid mass value -->
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>  <!-- Add both radius and length attributes -->
+            </geometry>
+            <material name="gray"> <!-- Add a material name attribute -->
+                <color rgba="0.8 0.8 0.8 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>  <!-- Add both radius and length attributes -->
+            </geometry>
+        </collision>
+    </link>
+    
+    <!-- Attach the lidar_link to an existing robot link -->
+    <joint name="lidar_joint" type="fixed">
+        <parent link="base_link"/>  
+        <child link="lidar_link"/>
+        <origin rpy="0 0 0" xyz="0 0 -.025"/>
+    </joint>
+
+    <!-- Camera Link -->
+     
+    <link name="camera_link">
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.05 0.05 0.05"/>
+            </geometry>
+            <material name= "black">
+                <color rgba="0.0 0.0 0.0 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.05 0.05 0.05"/>
+            </geometry>
+        </collision>
+    </link>
+    
+
+    <!-- Fixed Joint to Attach Camera -->
+     
+    <joint name="camera_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="camera_link"/>
+        <origin xyz="0.4 0.1 1.5" rpy="-3.14 0 0"/>
+    </joint>
+    
+
+    
+
+        
+    <!-- Transmission definitions -->
+    <xacro:default_transmission number="1"/>
+    <xacro:default_transmission number="2"/>
+    <xacro:default_transmission number="3"/>
+    <xacro:default_transmission number="4"/>
+    <xacro:default_transmission number="5"/>
+    <xacro:default_transmission number="6"/>
+    <xacro:default_transmission number="7"/> 
+
+
+
+</robot>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<robot name="crx_10ia">
+    <group name="arm">
+        <joint name="joint_1"/>
+        <joint name="joint_2"/>
+        <joint name="joint_3"/>
+        <joint name="joint_4"/>
+        <joint name="joint_5"/>
+        <joint name="joint_6"/>
+    </group>
+
+    <group name="gripper">
+        <joint name="joint_7"/>
+        <joint name="joint_8"/>
+    </group>
+
+    <group_state name="home_arm" group="arm">
+        <joint name="joint_1" value="0"/>
+        <joint name="joint_2" value="0"/>
+        <joint name="joint_3" value="0"/>
+        <joint name="joint_4" value="0"/>
+        <joint name="joint_5" value="0"/>
+        <joint name="joint_6" value="0"/>  
+    </group_state>
+
+    <group_state name="home_gripper" group="gripper">
+        <joint name="joint_7" value="-0.03"/>
+    </group_state>
+        
+    <disable_collisions link1="base_link" link2="axis1" reason="Adjacent"/>
+    <disable_collisions link1="axis1" link2="axis2" reason="Adjacent"/>
+    <disable_collisions link1="axis2" link2="axis3" reason="Adjacent"/>
+    <disable_collisions link1="axis3" link2="axis4" reason="Adjacent"/>
+    <disable_collisions link1="axis4" link2="axis5" reason="Adjacent"/>
+    <disable_collisions link1="axis5" link2="axis6" reason="Adjacent"/>
+    <disable_collisions link1="axis6" link2="gripper_base_link" reason="Never"/>
+    <disable_collisions link1="base_link" link2="gripper_base_link" reason="Never"/>
+    <disable_collisions link1="gripper_base_link" link2="left_finger" reason="Never"/>
+    <disable_collisions link1="gripper_base_link" link2="right_finger" reason="Never"/> 
+    <disable_collisions link1="left_finger" link2="right_finger" reason="Never"/>
+    <disable_collisions link1="base_link" link2="lidar_link" reason="Adjacent"/>
+
+</robot>

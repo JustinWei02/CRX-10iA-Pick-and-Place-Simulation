@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="crx_10ia">
+
+    <xacro:property name="PI" value="3.14159"/>
+
+    <ros2_control name="RobotSystem" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+        <joint name='joint_1'>
+            <command_interface name="position">
+                <param name="min">-3.31612</param>
+                <param name="max">3.31612</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name='joint_2'>
+            <command_interface name="position">
+                <param name="min">-${PI}</param>
+                <param name="max">${PI}</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name='joint_3'>
+            <command_interface name="position">
+                <param name="min">-4.9742</param>
+                <param name="max">4.9742</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name='joint_4'>
+            <command_interface name="position">
+                <param name="min">-3.31612</param>
+                <param name="max">3.31612</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name='joint_5'>
+            <command_interface name="position">
+                <param name="min">-${PI}</param>
+                <param name="max">${PI}</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name='joint_6'>
+            <command_interface name="position">
+                <param name="min">-3.927</param>
+                <param name="max">3.927</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name='joint_7'>
+            <command_interface name="position">
+                <param name="min">-10.0000</param> 
+                <param name="max">10.0000</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <!--<state_interface name="velocity"/>-->
+        </joint>
+
+    </ros2_control>
+
+</robot>
